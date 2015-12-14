@@ -11,6 +11,7 @@ public class BottledExperience extends JavaPlugin{
 		reloadConfig();
 		FileConfiguration config = getConfig();
 		XpPerBottle = config.getInt("xp_per_bottle");
+		getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 	}
 	
 	public int getXpPerBottle() {

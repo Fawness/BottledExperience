@@ -5,6 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ExpBottleEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +20,8 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void playerInteract(PlayerInteractEvent e) {
 		Block b = e.getClickedBlock();
-		if (b != null && b.getType() == Material.ENCHANTMENT_TABLE) {
+		if (e.getAction() == Action.LEFT_CLICK_BLOCK && b != null
+				&& b.getType() == Material.ENCHANTMENT_TABLE) {
 			Player p = e.getPlayer();
 			if (p.getItemInHand() != null
 					&& p.getItemInHand().getType() == Material.GLASS_BOTTLE) {
@@ -29,15 +31,20 @@ public class PlayerListener implements Listener {
 				int xpavailable = p.getTotalExperience()
 						/ plugin.getXpPerBottle();
 				int remove = Math.min(bottles, xpavailable);
-				p.setTotalExperience(p.getTotalExperience()
-						- (remove * plugin.getXpPerBottle()));
-				ItemMap removeMap = new ItemMap();
-				removeMap.addItemAmount(new ItemStack(Material.GLASS_BOTTLE),
-						remove);
-				for (ItemStack is : removeMap.getItemStackRepresentation()) {
-					p.getInventory().removeItem(is);
-					is.setType(Material.EXP_BOTTLE);
-					p.getInventory().addItem(is);
+				if (remove != 0) {
+					int endXP = p.getTotalExperience()
+							- (remove * plugin.getXpPerBottle());
+					p.setLevel(0);
+					p.setTotalExperience(0);
+					p.giveExp(endXP);
+					ItemMap removeMap = new ItemMap();
+					removeMap.addItemAmount(
+							new ItemStack(Material.GLASS_BOTTLE), remove);
+					for (ItemStack is : removeMap.getItemStackRepresentation()) {
+						p.getInventory().removeItem(is);
+						is.setType(Material.EXP_BOTTLE);
+						p.getInventory().addItem(is);
+					}
 				}
 			}
 		}
