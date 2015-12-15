@@ -1,6 +1,0 @@
-name: BottledExperience
-main: com.github.maxopoly.BottledExperience.BottledExperience
-version: 1.0
-author: Maxopoly
-description: Allows to store players experience in bottles
-commands:
