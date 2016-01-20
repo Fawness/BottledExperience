@@ -2,5 +2,6 @@ name: ${project.name}
 main: com.github.maxopoly.BottledExperience.BottledExperience
 version: ${project.version}
 author: Maxopoly
+depend: [CivModCore]
 description: Allows to store players experience in bottles
 commands:

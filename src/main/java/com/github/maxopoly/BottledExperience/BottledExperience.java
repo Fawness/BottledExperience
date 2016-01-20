@@ -1,12 +1,15 @@
 package com.github.maxopoly.BottledExperience;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public class BottledExperience extends JavaPlugin{
-	
+import vg.civcraft.mc.civmodcore.ACivMod;
+
+public class BottledExperience extends ACivMod {
+	private static BottledExperience plugin;
 	private int XpPerBottle;
 	public void onEnable() {
+		super.onEnable();
+		plugin = this;
 		saveDefaultConfig();
 		reloadConfig();
 		FileConfiguration config = getConfig();
@@ -16,6 +19,14 @@ public class BottledExperience extends JavaPlugin{
 	
 	public int getXpPerBottle() {
 		return XpPerBottle;
+	}
+	
+	public static BottledExperience getPlugin() {
+		return plugin;
+	}
+	
+	protected String getPluginName() {
+	    return "BottledExperience";
 	}
 
 }
