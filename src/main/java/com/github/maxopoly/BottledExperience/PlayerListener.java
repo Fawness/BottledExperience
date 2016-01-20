@@ -10,6 +10,8 @@ import org.bukkit.event.entity.ExpBottleEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import vg.civcraft.mc.civmodcore.itemHandling.ItemMap;
+
 public class PlayerListener implements Listener {
 	BottledExperience plugin;
 
@@ -31,11 +33,16 @@ public class PlayerListener implements Listener {
 				int xpavailable = p.getTotalExperience()
 						/ plugin.getXpPerBottle();
 				int remove = Math.min(bottles, xpavailable);
-				if (remove != 0) {
+				log(p.getName() + "interacted with enchanting table, he has "
+						+ bottles + " bottles, " + p.getTotalExperience()
+						+ " total experience, enough to fill " + remove
+						+ bottles);
+				if (remove > 0) {
 					int endXP = p.getTotalExperience()
 							- (remove * plugin.getXpPerBottle());
 					p.setLevel(0);
 					p.setTotalExperience(0);
+					log("Set xp for " + p.getName() + " to " + endXP);
 					p.giveExp(endXP);
 					ItemMap removeMap = new ItemMap();
 					removeMap.addItemAmount(
@@ -44,6 +51,8 @@ public class PlayerListener implements Listener {
 						p.getInventory().removeItem(is);
 						is.setType(Material.EXP_BOTTLE);
 						p.getInventory().addItem(is);
+						log("Turned " + is.getAmount()
+								+ " bottles into xp bottles for " + p.getName());
 					}
 				}
 			}
@@ -54,6 +63,10 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void xpBottleEvent(ExpBottleEvent e) {
 		e.setExperience(plugin.getXpPerBottle());
+	}
+
+	public void log(String msg) {
+		BottledExperience.getPlugin().info(msg);
 	}
 
 }
