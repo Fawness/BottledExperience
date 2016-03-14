@@ -1,5 +1,9 @@
 package com.github.maxopoly.BottledExperience;
 
+import java.util.HashMap;
+
+import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -23,35 +27,77 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void playerInteract(PlayerInteractEvent e) {
 		Block b = e.getClickedBlock();
+		
 		if (e.getAction() == Action.LEFT_CLICK_BLOCK && b != null && b.getType() == Material.ENCHANTMENT_TABLE) {
 			Player p = e.getPlayer();
+			
 			int totalExperience = computeCurrentXP(p);
-			if (p.getItemInHand() != null && p.getItemInHand().getType() == Material.GLASS_BOTTLE &&
-					totalExperience >= plugin.getXpPerBottle() ) {
-				ItemMap playerInv = new ItemMap(p.getInventory());
-				int bottles = playerInv.getAmount(new ItemStack( Material.GLASS_BOTTLE));
-				int xpavailable = totalExperience / plugin.getXpPerBottle();
-				int remove = Math.min(bottles, xpavailable);
-				log(p.getName() + "interacted with enchanting table, inventory has " + bottles + " bottles, " 
-						+ totalExperience + " total experience, enough to fill " + remove + " bottles");
-				if (remove > 0) {
-					int endXP = totalExperience - (remove * plugin.getXpPerBottle());
-					p.setLevel(0);
-					p.setExp(0f);
-					log("Set xp for " + p.getName() + " to " + endXP);
-					p.giveExp(endXP);
-					ItemMap removeMap = new ItemMap();
-					removeMap.addItemAmount( new ItemStack(Material.GLASS_BOTTLE), remove);
-					for (ItemStack is : removeMap.getItemStackRepresentation()) {
-						p.getInventory().removeItem(is);
-						is.setType(Material.EXP_BOTTLE);
-						p.getInventory().addItem(is);
-						log("Turned " + is.getAmount() + " bottles into xp bottles for " + p.getName());
-					}
-				}
+			
+			if (p.getItemInHand() != null
+					&& p.getItemInHand().getType() == Material.GLASS_BOTTLE
+					&& totalExperience >= plugin.getXpPerBottle()
+					) {
+				createXPBottles(p, totalExperience);
+			}
+		}
+	}
+	
+	private void createXPBottles(Player p, int totalExperience) {
+		ItemMap playerInv = new ItemMap(p.getInventory());
+		int bottles = playerInv.getAmount(new ItemStack( Material.GLASS_BOTTLE));
+		int xpavailable = totalExperience / plugin.getXpPerBottle();
+		int remove = Math.min(bottles, xpavailable);
+		
+		log(p.getName() + " interacted with enchanting table, inventory has " + bottles + " bottles, " 
+				+ totalExperience + " total experience, enough to fill " + remove + " bottles");
+		
+		if (remove == 0) {
+			return;
+		}
+		
+		boolean noSpace = false;
+		int xpBottleCount = 0;
+		ItemMap removeMap = new ItemMap();
+		
+		removeMap.addItemAmount( new ItemStack(Material.GLASS_BOTTLE), remove);
+		
+		for (ItemStack is : removeMap.getItemStackRepresentation()) {
+			p.getInventory().removeItem(is);
+			is.setType(Material.EXP_BOTTLE);
+			
+			HashMap<Integer, ItemStack> result = p.getInventory().addItem(is);
+			
+			if(result != null && result.size() > 0) {
+				is.setType(Material.GLASS_BOTTLE);
+				p.getInventory().addItem(is);
+				
+				noSpace = true;
+				
+				log("Cannot store " + is.getAmount() + " xp bottles in inventory for " + p.getName());
+				
+				break;
+			} else {
+				xpBottleCount += is.getAmount(); 
+				
+				log("Turned " + is.getAmount() + " bottles into xp bottles for " + p.getName());
 			}
 		}
 
+		if(xpBottleCount > 0) {
+			int endXP = totalExperience - xpBottleCount * plugin.getXpPerBottle();
+
+			log("Set xp for " + p.getName() + " to " + endXP);
+
+			p.setLevel(0);
+			p.setExp(0f);
+			p.giveExp(endXP);
+			
+			p.sendMessage(ChatColor.GREEN + "Created " + xpBottleCount + " XP bottles.");
+		}
+		
+		if(noSpace) {
+			p.sendMessage(ChatColor.RED + "Not enough space in inventory for all XP bottles.");
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
