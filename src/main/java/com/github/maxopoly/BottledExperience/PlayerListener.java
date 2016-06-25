@@ -32,8 +32,8 @@ public class PlayerListener implements Listener {
 			
 			int totalExperience = computeCurrentXP(p);
 			
-			if (p.getItemInHand() != null
-					&& p.getItemInHand().getType() == Material.GLASS_BOTTLE
+			if (p.getInventory().getItemInMainHand() != null
+					&& p.getInventory().getItemInMainHand().getType() == Material.GLASS_BOTTLE
 					&& totalExperience >= plugin.getXpPerBottle()
 					) {
 				createXPBottles(p, totalExperience);
@@ -61,6 +61,8 @@ public class PlayerListener implements Listener {
 		removeMap.addItemAmount( new ItemStack(Material.GLASS_BOTTLE), remove);
 		
 		for (ItemStack is : removeMap.getItemStackRepresentation()) {
+			int initialAmount = is.getAmount();
+			
 			p.getInventory().removeItem(is);
 			is.setType(Material.EXP_BOTTLE);
 			
@@ -76,9 +78,9 @@ public class PlayerListener implements Listener {
 				
 				break;
 			} else {
-				xpBottleCount += is.getAmount(); 
+				xpBottleCount += initialAmount; 
 				
-				log("Turned " + is.getAmount() + " bottles into xp bottles for " + p.getName());
+				log("Turned " + initialAmount + " bottles into xp bottles for " + p.getName());
 			}
 		}
 

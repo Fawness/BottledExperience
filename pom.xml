@@ -4,7 +4,7 @@
 
 	<groupId>com.github.maxopoly</groupId>
 	<artifactId>BottledExperience</artifactId>
-	<version>1.3</version>
+	<version>1.4</version>
 	<packaging>jar</packaging>
 
 	<name>BottledExperience</name>
@@ -17,11 +17,11 @@
 	</properties>
 
 	<build>
-		<sourceDirectory>${basedir}/src</sourceDirectory>
+		<sourceDirectory>src/main/java</sourceDirectory>
 
 		<resources>
 			<resource>
-				<directory>${basedir}</directory>
+				<directory>.</directory>
 				<includes>
 					<include>*.yml</include>
 					<include>license.txt</include>
