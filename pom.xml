@@ -8,23 +8,27 @@
 	<packaging>jar</packaging>
 
 	<name>BottledExperience</name>
-	<url>https://github.com/maxopoly/BottledExperience</url>
+	<url>https://github.com/DevotedMC/BottledExperience</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-
 		<resources>
 			<resource>
-				<directory>.</directory>
+        <directory>${basedir}</directory>
 				<includes>
-					<include>*.yml</include>
-					<include>license.txt</include>
+					<include>License.txt</include>
+				</includes>
+			</resource>
+			<resource>
+        <directory>${basedir}/src/main/resources/</directory>
+				<includes>
+					<include>plugin.yml</include>
+          <include>config.yml</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>
@@ -41,13 +45,13 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.10-R0.1-SNAPSHOT</version>
+			<version>1.10.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>vg.civcraft.mc.civmodcore</groupId>
 			<artifactId>CivModCore</artifactId>
-			<version>1.4.0</version>
+			<version>1.5.09</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -59,7 +63,7 @@
 		</repository>
 		<repository>
 			<id>Jenkins-repo</id>
-			<url>http://build.civcraft.co:8080/plugin/repository/everything/</url>
+			<url>https://build.devotedmc.com/plugin/repository/everything/</url>
 		</repository>
 	</repositories>
 </project>
